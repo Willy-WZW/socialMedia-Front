@@ -1,5 +1,94 @@
 <script>
+import Swal from 'sweetalert2';
+export default {
+    data() {
+        return {
+            userName: "",
+            userPhone: "",
+            userEmail: "",
+            userPassword: "",
+            confirmPassword: "",
+            // 對應的欄位名稱與顯示訊息
+            fields: [
+                { key: "userName", label: "使用者名稱" },
+                { key: "userPhone", label: "手機號碼" },
+                { key: "userEmail", label: "電子郵件" },
+                { key: "userPassword", label: "密碼" },
+                { key: "confirmPassword", label: "確認密碼" },
+            ],
+        }
+    },
+    methods: {
+        // 手機號碼輸入限制
+        inputPhone(event) {
+            const inputPhoneNum = event.target
+            inputPhoneNum.value = inputPhoneNum.value.replace(/\D/g, '')
+            if (!inputPhoneNum.value.startsWith('09')) {
+                inputPhoneNum.value = '09';
+            }
+        },
+        // 註冊帳號檢查
+        createAccount() {
+            // 檢查欄位是否未填寫
+            for (const field of this.fields) {
+                if (!this[field.key]) {
+                    Swal.fire({
+                        title: "錯誤",
+                        text: `請輸入${field.label}`,
+                        icon: "error",
+                        confirmButtonText: "好的",
+                    });
+                    return;
+                }
 
+                // 檢查手機號碼長度
+                if (this.userPhone.length !== 10) {
+                    Swal.fire({
+                        title: "錯誤",
+                        text: "手機號碼輸入錯誤",
+                        icon: "error",
+                        confirmButtonText: "好的",
+                    });
+                    return;
+                }
+
+                // 檢查郵件格式
+                if (!this.userEmail.includes("@") || !this.userEmail.includes(".com")) {
+                    Swal.fire({
+                        title: "錯誤",
+                        text: "請輸入有效的電子郵件(必須包含 @ 和 .com)",
+                        icon: "error",
+                        confirmButtonText: "好的",
+                    });
+                    return;
+                }
+
+                // 檢查密碼一致性
+                if (this.userPassword !== this.confirmPassword) {
+                    Swal.fire({
+                        title: "錯誤",
+                        text: "密碼與確認密碼不一致",
+                        icon: "error",
+                        confirmButtonText: "好的",
+                    });
+                    return;
+                }
+
+                // 所有欄位均已填寫且檢查通過
+                Swal.fire({
+                    title: "成功",
+                    text: "註冊成功！",
+                    icon: "success",
+                    confirmButtonText: "好的",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.$router.push("/");
+                    }
+                });
+            }
+        },
+    }
+}
 </script>
 
 <template>
@@ -7,25 +96,26 @@
         <h1>註冊帳號</h1>
         <div class="userName">
             <h3>使用者名稱</h3>
-            <input type="text" placeholder="請輸入使用者名稱">
+            <input type="text" v-model="userName" placeholder="請輸入使用者名稱">
         </div>
         <div class="userPhone">
             <h3>手機號碼</h3>
-            <input type="text" placeholder="請輸入手機號碼">
+            <input type="text" v-model="userPhone" maxlength="10" pattern="09[0-9]{8}" @input="inputPhone"
+                placeholder="請輸入手機號碼">
         </div>
         <div class="userEmail">
             <h3>電子郵件</h3>
-            <input type="text" placeholder="請輸入電子郵件">
+            <input type="text" v-model="userEmail" placeholder="請輸入電子郵件">
         </div>
         <div class="userPassword">
             <h3>密碼</h3>
-            <input type="password" placeholder="請輸入密碼">
+            <input type="password" v-model="userPassword" placeholder="請輸入密碼">
         </div>
         <div class="passwordAgain">
             <h3>確認密碼</h3>
-            <input type="password" placeholder="請再輸入一次密碼">
+            <input type="password" v-model="confirmPassword" placeholder="請再輸入一次密碼">
         </div>
-        <button class="submitBTN">註冊</button>
+        <button class="submitBTN" @click="createAccount()">註冊</button>
     </div>
 </template>
 
@@ -67,7 +157,7 @@
         }
     }
 
-    .submitBTN{
+    .submitBTN {
         width: 80%;
         height: 5dvh;
         letter-spacing: 5px;

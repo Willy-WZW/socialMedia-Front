@@ -18,7 +18,6 @@ export default {
 </script>
 
 <template>
-  {{ "這邊做登入頁面" }}
   <button @click="temporaryBTN()">社群頁面</button>
   <div class="loginArea">
     <Login />

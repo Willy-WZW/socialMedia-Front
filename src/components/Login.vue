@@ -1,4 +1,5 @@
 <script>
+import { RouterLink } from 'vue-router';
 export default {
     data() {
         return {
@@ -6,8 +7,8 @@ export default {
         }
     },
     methods: {
-        temporaryBTN() {
-            this.$router.push("./socialPage")
+        goSignIn() {
+            this.$router.push("./signInPage")
         },
     },
 }
@@ -18,7 +19,7 @@ export default {
         <h1>登入帳號</h1>
         <div class="signIn">
             <span>第一次登入&nbsp>>&nbsp</span>
-            <a href="">註冊</a>
+            <RouterLink to="/signInPage">註冊</RouterLink>
         </div>
         <div class="phoneNum">
             <h3>電話號碼</h3>

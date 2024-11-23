@@ -1,14 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import SignInView from '../views/SignInPage.vue'
-import SignInPage from '../views/SignInPage.vue'
+import LogInPage from '../views/LogInPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'signIn',
-      component: SignInPage
+      name: 'logIn',
+      component: LogInPage
     },
     {
       path: '/socialPage',

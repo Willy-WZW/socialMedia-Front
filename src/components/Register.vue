@@ -1,5 +1,6 @@
 <script>
 import Swal from 'sweetalert2';
+import axios from 'axios';
 export default {
     data() {
         return {
@@ -40,52 +41,71 @@ export default {
                     });
                     return;
                 }
-
-                // 檢查手機號碼長度
-                if (this.userPhone.length !== 10) {
-                    Swal.fire({
-                        title: "錯誤",
-                        text: "手機號碼輸入錯誤",
-                        icon: "error",
-                        confirmButtonText: "好的",
-                    });
-                    return;
-                }
-
-                // 檢查郵件格式
-                if (!this.userEmail.includes("@") || !this.userEmail.includes(".com")) {
-                    Swal.fire({
-                        title: "錯誤",
-                        text: "請輸入有效的電子郵件(必須包含 @ 和 .com)",
-                        icon: "error",
-                        confirmButtonText: "好的",
-                    });
-                    return;
-                }
-
-                // 檢查密碼一致性
-                if (this.userPassword !== this.confirmPassword) {
-                    Swal.fire({
-                        title: "錯誤",
-                        text: "密碼與確認密碼不一致",
-                        icon: "error",
-                        confirmButtonText: "好的",
-                    });
-                    return;
-                }
-
-                // 所有欄位均已填寫且檢查通過
-                Swal.fire({
-                    title: "成功",
-                    text: "註冊成功！",
-                    icon: "success",
-                    confirmButtonText: "好的",
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        this.$router.push("/");
-                    }
-                });
             }
+
+            // 檢查手機號碼長度
+            if (this.userPhone.length !== 10) {
+                Swal.fire({
+                    title: "錯誤",
+                    text: "手機號碼輸入錯誤",
+                    icon: "error",
+                    confirmButtonText: "好的",
+                });
+                return;
+            }
+
+            // 檢查郵件格式
+            if (!this.userEmail.includes("@") || !this.userEmail.includes(".com")) {
+                Swal.fire({
+                    title: "錯誤",
+                    text: "請輸入有效的電子郵件(必須包含 @ 和 .com)",
+                    icon: "error",
+                    confirmButtonText: "好的",
+                });
+                return;
+            }
+
+            // 檢查密碼一致性
+            if (this.userPassword !== this.confirmPassword) {
+                Swal.fire({
+                    title: "錯誤",
+                    text: "密碼與確認密碼不一致",
+                    icon: "error",
+                    confirmButtonText: "好的",
+                });
+                return;
+            }
+
+            // 發送 POST 請求到後端
+            axios.post('http://localhost:8080/user/create', {
+                userPhone: this.userPhone,
+                userEmail: this.userEmail,
+                userPassword: this.userPassword,
+                userName: this.userName
+            })
+                .then(response => {
+                    if (response.data.code === 200) {
+                        Swal.fire({
+                            title: "成功",
+                            text: "註冊成功！",
+                            icon: "success",
+                            confirmButtonText: "好的",
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                this.$router.push("/");
+                            }
+                        });
+                    }
+                })
+                .catch(error => {
+                    // 如果發生錯誤，顯示錯誤訊息
+                    Swal.fire({
+                        title: "錯誤",
+                        text: error.response.data.message || "註冊失敗，請稍後再試。",
+                        icon: "error",
+                        confirmButtonText: "好的",
+                    });
+                });
         },
     }
 }

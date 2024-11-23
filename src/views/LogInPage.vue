@@ -1,24 +1,13 @@
 <script>
 import Login from '@/components/Login.vue'
 export default {
-  data() {
-    return {
-
-    }
-  },
-  methods: {
-    temporaryBTN() {
-      this.$router.push("./socialPage")
-    },
-  },
-  components:{
+  components: {
     Login
   }
 }
 </script>
 
 <template>
-  <button @click="temporaryBTN()">社群頁面</button>
   <div class="loginArea">
     <Login />
   </div>

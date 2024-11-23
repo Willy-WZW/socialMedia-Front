@@ -1,9 +1,12 @@
 <script>
 import { RouterLink } from 'vue-router';
+import Swal from 'sweetalert2';
+import axios from 'axios';
 export default {
     data() {
         return {
-
+            userPhone: "",
+            userPassword: "",
         }
     },
     methods: {
@@ -15,6 +18,61 @@ export default {
                 inputPhoneNum.value = '09';
             }
         },
+        login() {
+            // 檢查手機號碼格式與密碼是否填寫
+            if (!this.userPhone || !/^09\d{8}$/.test(this.userPhone)) {
+                Swal.fire({
+                    title: "錯誤",
+                    text: "請輸入正確的手機號碼",
+                    icon: "error",
+                    confirmButtonText: "好的",
+                });
+                return;
+            }
+
+            if (!this.userPassword) {
+                Swal.fire({
+                    title: "錯誤",
+                    text: "請輸入密碼",
+                    icon: "error",
+                    confirmButtonText: "好的",
+                });
+                return;
+            }
+            axios.post("http://localhost:8080/user/login", {
+                    phone: this.userPhone,
+                    pwd: this.userPassword,
+                })
+                .then((response) => {
+                    const { code, message } = response.data;
+
+                    if (code === 200) {
+                        Swal.fire({
+                            title: "成功",
+                            text: "登入成功！",
+                            icon: "success",
+                            confirmButtonText: "好的",
+                        }).then(() => {
+                            this.$router.push("/socialPage");
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "錯誤",
+                            text: message,
+                            icon: "error",
+                            confirmButtonText: "好的",
+                        });
+                    }
+                })
+                .catch((error) => {
+                    Swal.fire({
+                        title: "錯誤",
+                        text: error.response?.data?.message || "伺服器發生錯誤，請稍後再試",
+                        icon: "error",
+                        confirmButtonText: "好的",
+                    });
+                });
+        },
     },
 }
 </script>
@@ -22,16 +80,16 @@ export default {
 <template>
     <div class="loginBox">
         <h1>登入帳號</h1>
-        
         <div class="phoneNum">
             <h3>手機號碼</h3>
-            <input type="text" maxlength="10" pattern="09[0-9]{8}" @input="inputPhone" placeholder="請輸入手機號碼">
+            <input type="text" v-model="userPhone" maxlength="10" pattern="09[0-9]{8}" @input="inputPhone"
+                placeholder="請輸入手機號碼">
         </div>
         <div class="password">
             <h3>密碼</h3>
-            <input type="password" placeholder="請輸入密碼">
+            <input type="password" v-model="userPassword" placeholder="請輸入密碼">
         </div>
-        <button class="loginBTN">登入</button>
+        <button class="loginBTN" @click="login()">登入</button>
         <div class="signIn">
             <span>第一次登入&nbsp>>&nbsp</span>
             <RouterLink to="/registerPage">註冊</RouterLink>

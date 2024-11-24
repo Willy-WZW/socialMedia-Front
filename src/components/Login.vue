@@ -1,5 +1,6 @@
 <script>
 import { RouterLink } from 'vue-router';
+import { useCounterStore } from '@/stores/userStore';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 export default {
@@ -44,9 +45,12 @@ export default {
                     pwd: this.userPassword,
                 })
                 .then((response) => {
-                    const { code, message } = response.data;
+                    const { code, message, userInfo } = response.data;
 
                     if (code === 200) {
+                        const userStore = useCounterStore();
+                        userStore.setUserPhone(this.userPhone);
+                        console.log(userStore.userPhone); //檢查
                         Swal.fire({
                             title: "成功",
                             text: "登入成功！",

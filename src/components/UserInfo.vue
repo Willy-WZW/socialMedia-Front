@@ -18,6 +18,38 @@ export default {
     },
     methods: {
         editInfo() {
+            if (this.editMode) {
+                // 編輯模式，發送更新數據到後端
+                const userData = {
+                    userId: this.userId,
+                    userName: this.userName,
+                    introduce: this.introduce,
+                    userImage: this.userImage
+                };
+                console.log(userData);
+
+                axios.post("http://localhost:8080/user/update", userData)
+                    .then(response => {
+                        if (response.status === 200) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: '成功',
+                                text: '個人資料更新成功！',
+                                confirmButtonText: '確定'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('更新失敗：', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: '錯誤',
+                            text: '保存失敗，請稍後再試。',
+                            confirmButtonText: '確定'
+                        });
+                    });
+            }
+
             this.editMode = !this.editMode;
         },
         fileInput() {
@@ -28,9 +60,9 @@ export default {
             if (file) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    this.userImage = e.target.result; 
+                    this.userImage = e.target.result;
                 };
-                reader.readAsDataURL(file); 
+                reader.readAsDataURL(file);
             }
         },
         fetchUserPhone() {
@@ -53,7 +85,7 @@ export default {
                 this.userId = userInfo.userId;
                 this.userName = userInfo.userName;
                 this.userImage = userInfo.coverImage;
-                this.introduce = userInfo.biography;
+                this.introduce = userInfo.introduce;
                 console.log(userInfo);
 
                 const userStore = useCounterStore();
@@ -81,7 +113,7 @@ export default {
     <div class="introduce">
         <h3>關於我</h3>
         <textarea style="resize: none;" :disabled="!editMode" v-model="introduce"
-            :placeholder="this.introduce || '寫點什麼吧...'"> {{ this.introduce }}</textarea>
+            :placeholder="introduce || '寫點什麼吧...'"> {{ introduce }}</textarea>
     </div>
     <button class="editBTN" @click="editInfo()">{{ editMode ? '完成' : '編輯個人檔案' }}</button>
 </template>

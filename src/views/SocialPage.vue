@@ -1,5 +1,6 @@
 <script>
 import UserInfo from '@/components/UserInfo.vue';
+import Post from '@/components/Post.vue'
 export default {
   data() {
     return {
@@ -12,7 +13,8 @@ export default {
     }
   },
   components: {
-    UserInfo
+    UserInfo,
+    Post,
   }
 }
 </script>
@@ -21,7 +23,9 @@ export default {
   <div class="userInfo">
     <UserInfo />
   </div>
-  <div class="news"></div>
+  <div class="news">
+    <Post />
+  </div>
 
   <button class="logoutBTN" @click="logout()">登出</button>
 </template>
@@ -43,10 +47,17 @@ export default {
 .news {
   width: 60%;
   min-height: 100dvh;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: start;
   position: fixed;
   top: 2%;
   right: 16%;
-  border: 1px solid black;
+  background-color: white;
+  box-shadow: -4px 4px 3px black;
 }
 
 .logoutBTN {

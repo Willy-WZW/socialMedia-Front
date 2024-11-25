@@ -71,6 +71,8 @@ export default {
 
             if (userPhone) {
                 this.userPhone = userPhone;
+            } else {
+                console.warn("userPhone 未從 Pinia 中恢復");
             }
             // console.log(this.userPhone); //檢查
         },
@@ -93,7 +95,7 @@ export default {
             } catch (error) {
                 console.error("Failed to fetch user info:", error.response?.data || error.message);
             }
-        }
+        },
     },
     mounted() {
         this.fetchUserPhone();

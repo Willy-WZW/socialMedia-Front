@@ -3,7 +3,7 @@ import Swal from 'sweetalert2';
 import axios from 'axios';
 import { watch } from 'vue';
 import { useCounterStore } from '@/stores/userStore';
-import userDefIcon from '@/assets/userDefIcon.png'
+import userDefIcon from '@/assets/userDefIcon.png';
 export default {
     data() {
         return {
@@ -104,7 +104,7 @@ export default {
 <style scoped lang="scss">
 .unitPost {
     width: 95%;
-    margin-top: 2%;
+    margin: 2% 0 1% 0;
     padding: 1%;
     display: flex;
     justify-content: center;

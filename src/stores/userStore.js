@@ -19,6 +19,7 @@ export const useCounterStore = defineStore("user", {
       introduce: "",
     }, // 保存User詳細資料
   }),
+  // 設置持久化字段
   persist: {
     paths: ["userPhone", "userInfo"],
   },

@@ -1,6 +1,7 @@
 <script>
 import UserInfo from '@/components/UserInfo.vue';
 import Post from '@/components/Post.vue'
+import AllPost from '@/components/AllPost.vue'
 export default {
   data() {
     return {
@@ -15,6 +16,7 @@ export default {
   components: {
     UserInfo,
     Post,
+    AllPost,
   }
 }
 </script>
@@ -24,7 +26,12 @@ export default {
     <UserInfo />
   </div>
   <div class="news">
-    <Post />
+    <div class="userNewPost">
+      <Post />
+    </div>
+    <div class="allPost">
+      <AllPost />
+    </div>
   </div>
 
   <button class="logoutBTN" @click="logout()">登出</button>
@@ -51,13 +58,30 @@ export default {
   scrollbar-width: none;
   border-radius: 10px;
   display: flex;
-  justify-content: center;
-  align-items: start;
+  justify-content: start;
+  align-items: center;
+  flex-direction: column;
   position: fixed;
   top: 2%;
   right: 16%;
   background-color: white;
   box-shadow: -4px 4px 3px black;
+
+  .userNewPost{
+    width: 96%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 3px solid gray;
+  }
+
+  .allPost{
+    width: 96%;
+    flex-wrap: wrap;
+    display: flex;
+    justify-content: start;
+    align-items: start;
+  }
 }
 
 .logoutBTN {

@@ -11,7 +11,7 @@ export default {
   methods: {
     logout() {
       this.$router.push('/')
-    }
+    },
   },
   components: {
     UserInfo,
@@ -53,7 +53,7 @@ export default {
 
 .news {
   width: 60%;
-  min-height: 100dvh;
+  height: 100dvh;
   overflow-y: scroll;
   scrollbar-width: none;
   border-radius: 10px;
@@ -78,6 +78,7 @@ export default {
   .allPost{
     width: 96%;
     flex-wrap: wrap;
+    padding: 3%;
     display: flex;
     justify-content: start;
     align-items: start;

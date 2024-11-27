@@ -1,8 +1,9 @@
 <script>
 import Swal from 'sweetalert2';
-import axios from 'axios';
+import dayjs from 'dayjs';
 import { watch } from 'vue';
 import { useCounterStore } from '@/stores/userStore';
+import { usePostStore } from "@/stores/postStore";
 import userDefIcon from '@/assets/userDefIcon.png';
 export default {
     data() {
@@ -35,40 +36,16 @@ export default {
 
             const postData = {
                 userId: this.postUserId,
-                postContent: this.postContent,
+                postContent: this.postContent.replace(/\n/g, '<br>'),
                 postImage: this.postUserImg || null, // 沒有圖片則傳 null
-                createTime: new Date().toISOString().slice(0, 10),
+                createTime: dayjs().format('YYYY-MM-DD HH:mm:ss'),
             };
             console.log(postData);
 
-            // 發送請求
-            axios.post('http://localhost:8080/post/create', postData)
-                .then((response) => {
-                    const { code, message } = response.data;
-                    if (code === 200) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: '成功！',
-                            text: '貼文已成功發佈！',
-                        });
-                        // 清空貼文內容
-                        this.postContent = '';
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: '發佈失敗！',
-                            text: message || '請稍後再試。',
-                        });
-                    }
-                })
-                .catch((error) => {
-                    console.error('貼文發佈失敗：', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: '失敗！',
-                        text: '發佈失敗，請稍後再試。',
-                    });
-                });
+            // 發送請求(寫在pinia)
+            const postStore = usePostStore();
+            postStore.addPost(postData);
+            this.postContent = ""
         },
     },
     mounted() {
@@ -91,7 +68,7 @@ export default {
 <template>
     <div class="unitPost">
         <div class="poster">
-            <img :src="userImage || userDefIcon" alt="user image">
+            <img :src="$sanitize(userImage) || userDefIcon" alt="user image">
             <h1>{{ postUserName }}</h1>
         </div>
         <div class="content">

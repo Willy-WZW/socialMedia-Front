@@ -36,5 +36,24 @@ export const usePostStore = defineStore("postStore", {
                     console.error("Error message", error);
                 });
         },
+        updatePost(updateData) {
+            axios
+                .post("http://localhost:8080/post/update", updateData)
+                .then((response) => {
+                    if (response.data.code == 200) {
+                        Swal.fire({
+                            title: "成功",
+                            text: "貼文更新成功！",
+                            icon: "success",
+                            confirmButtonText: "好的",
+                        }).then(() => {
+                            this.getAllPost();
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error message", error);
+                });
+        },
     },
 });

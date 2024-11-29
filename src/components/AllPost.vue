@@ -1,4 +1,5 @@
 <script>
+import dayjs from 'dayjs';
 import userDefIcon from '@/assets/userDefIcon.png';
 import { usePostStore } from "@/stores/postStore";
 import { useCounterStore } from "@/stores/userStore";
@@ -7,10 +8,45 @@ export default {
     data() {
         return {
             userDefIcon,
+            editMode: false,
         }
     },
     methods: {
+        editPost(item) {
+            item.editMode = !item.editMode
+            if (item.editMode) {
+                // 進入編輯模式時將 <br> 替換為 \n
+                item.postContent = item.postContent.replace(/<br>/g, '\n');
 
+            }
+            // 儲存到DB
+            if (!item.editMode) {
+                const updateData = {
+                    postId: item.postId,
+                    userId: item.userId,
+                    postContent: item.postContent,
+                    postImage: item.postImage,
+                    createTime: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+                }
+                console.log(updateData);
+                const postStore = usePostStore();
+                postStore.updatePost(updateData);
+            }
+            this.$nextTick(() => {
+                const textarea = document.querySelector(`#textarea-${item.postId}`);
+                if (textarea) {
+                    textarea.style.height = 'auto'; // 重設高度
+                    textarea.style.height = `${textarea.scrollHeight}px`; // 設置內容高度
+                } else {
+                    console.error(`Textarea not found for postId: ${item.postId}`);
+                }
+            });
+        },
+        autoResize(event) {
+            const textarea = event.target;
+            textarea.style.height = 'auto'; // 先重設高度，避免新增文字時滾動條出現
+            textarea.style.height = `${textarea.scrollHeight}px`; // 設置為文字內容高度
+        },
     },
     mounted() {
         const postStore = usePostStore();
@@ -21,7 +57,7 @@ export default {
             const postStore = usePostStore();
             return postStore.postInfo;
         },
-        currentUserId (){
+        currentUserId() {
             const userStore = useCounterStore();
             return userStore.userInfo.userId;
         }
@@ -37,15 +73,19 @@ export default {
             <span>{{ item.createTime }}</span>
         </div>
         <div class="postText">
-            <span v-html="$sanitize(item.postContent).replace(/\n/g, '<br>')"></span>
+            <span v-if="!item.editMode" v-html="$sanitize(item.postContent).replace(/\n/g, '<br>')"></span>
+            <textarea v-show="item.editMode" v-model="item.postContent" @input="autoResize($event)"
+                style="resize: none;" :id="'textarea-' + item.postId"></textarea>
         </div>
         <div class="commentIcon">
             <div class="iconLeft">
                 <i class="fa-regular fa-comment"></i>
             </div>
             <div class="iconRight">
-                <i v-if="item.userId == currentUserId" class="fa-solid fa-user-pen"></i>
-                <i v-if="item.userId == currentUserId" class="fa-solid fa-trash"></i>
+                <i v-if="item.userId == currentUserId && !item.editMode" @click="editPost(item)"
+                    class="fa-solid fa-user-pen"></i>
+                <i v-if="item.editMode" @click="editPost(item)" class="fa-solid fa-check"></i>
+                <i v-if="item.userId == currentUserId && !item.editMode" class="fa-solid fa-trash"></i>
             </div>
         </div>
     </div>
@@ -90,15 +130,24 @@ export default {
 
     .postText {
         width: 100%;
-        max-height: 15dvh;
+        min-height: 20dvh;
         overflow-y: scroll;
         scrollbar-width: none;
         display: flex;
         justify-content: end;
 
-        span {
+        span,
+        textarea {
             width: 96%;
+            font-size: 20px;
             margin-top: 1dvh;
+            margin-bottom: 2%;
+        }
+
+        textarea {
+            min-height: 18dvh;
+            scrollbar-width: none;
+            margin-right: 2%;
         }
     }
 
@@ -151,6 +200,7 @@ export default {
             justify-content: end;
 
             .fa-user-pen,
+            .fa-check,
             .fa-trash {
                 font-size: 24px;
                 cursor: pointer;
@@ -161,7 +211,8 @@ export default {
                 margin-right: 10%;
             }
 
-            .fa-user-pen {
+            .fa-user-pen,
+            .fa-check {
                 &::after {
                     content: "編輯";
                     width: 40px;
@@ -185,6 +236,14 @@ export default {
                 &:hover::after {
                     width: 60px;
                     opacity: 1;
+                }
+            }
+
+            .fa-check {
+                color: green;
+
+                &::after {
+                    content: "完成";
                 }
             }
 

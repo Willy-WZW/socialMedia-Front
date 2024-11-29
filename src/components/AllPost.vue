@@ -47,6 +47,16 @@ export default {
             textarea.style.height = 'auto'; // 先重設高度，避免新增文字時滾動條出現
             textarea.style.height = `${textarea.scrollHeight}px`; // 設置為文字內容高度
         },
+        deletePost(item) {
+                const deleteData = {
+                    postId: item.postId,
+                    userId: item.userId,
+                }
+                // console.log(deleteData);
+                const postStore = usePostStore();
+                postStore.dropPost(deleteData);
+            
+        }
     },
     mounted() {
         const postStore = usePostStore();
@@ -85,7 +95,8 @@ export default {
                 <i v-if="item.userId == currentUserId && !item.editMode" @click="editPost(item)"
                     class="fa-solid fa-user-pen"></i>
                 <i v-if="item.editMode" @click="editPost(item)" class="fa-solid fa-check"></i>
-                <i v-if="item.userId == currentUserId && !item.editMode" class="fa-solid fa-trash"></i>
+                <i v-if="item.userId == currentUserId && !item.editMode" @click="deletePost(item)"
+                    class="fa-solid fa-trash"></i>
             </div>
         </div>
     </div>

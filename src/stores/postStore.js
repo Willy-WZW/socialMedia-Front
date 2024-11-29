@@ -55,5 +55,39 @@ export const usePostStore = defineStore("postStore", {
                     console.error("Error message", error);
                 });
         },
+        dropPost(deleteDate) {
+            Swal.fire({
+                title: "確定要刪除這則貼文嗎？",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "確定",
+                cancelButtonText: "取消"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    axios.post("http://localhost:8080/post/delete", deleteDate)
+                        .then((response) => {
+                            if (response.data.code === 200) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: '成功',
+                                    text: '刪除貼文成功！',
+                                    confirmButtonText: '確定'
+                                }).then(() => {
+                                    this.getAllPost();
+                                });
+                            }
+                        })
+                        .catch((error) => {
+                            Swal.fire({
+                                icon: 'error',
+                                title: '錯誤',
+                                text: '刪除貼文失敗，請稍後在試！',
+                                confirmButtonText: '確定'
+                            })
+                            console.error("Error message", error);
+                        });
+                }
+            })
+        }
     },
 });

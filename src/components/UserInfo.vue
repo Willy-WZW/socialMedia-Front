@@ -26,7 +26,7 @@ export default {
                     introduce: this.introduce,
                     userImage: this.userImage
                 };
-                console.log(userData);
+                // console.log(userData);
 
                 axios.post("http://localhost:8080/user/update", userData)
                     .then(response => {
@@ -88,7 +88,7 @@ export default {
                 this.userName = userInfo.userName;
                 this.userImage = userInfo.coverImage;
                 this.introduce = userInfo.introduce;
-                console.log(userInfo);
+                // console.log(userInfo);
 
                 const userStore = useCounterStore();
                 userStore.setUserInfo(userInfo);

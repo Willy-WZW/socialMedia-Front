@@ -5,6 +5,8 @@ import { defineStore } from "pinia";
 export const usePostStore = defineStore("postStore", {
     state: () => ({
         postInfo: [],
+        postWindow: false,
+        selectedItem: null,
     }),
     actions: {
         getAllPost() {
@@ -88,6 +90,12 @@ export const usePostStore = defineStore("postStore", {
                         });
                 }
             })
+        },
+        expendPost(item = null){
+            this.postWindow = !this.postWindow
+            if (item) {
+                this.selectedItem = item;
+            }
         }
     },
 });

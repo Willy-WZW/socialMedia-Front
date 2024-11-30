@@ -17,7 +17,6 @@ export default {
             if (item.editMode) {
                 // 進入編輯模式時將 <br> 替換為 \n
                 item.postContent = item.postContent.replace(/<br>/g, '\n');
-
             }
             // 儲存到DB
             if (!item.editMode) {
@@ -48,15 +47,19 @@ export default {
             textarea.style.height = `${textarea.scrollHeight}px`; // 設置為文字內容高度
         },
         deletePost(item) {
-                const deleteData = {
-                    postId: item.postId,
-                    userId: item.userId,
-                }
-                // console.log(deleteData);
-                const postStore = usePostStore();
-                postStore.dropPost(deleteData);
-            
-        }
+            const deleteData = {
+                postId: item.postId,
+                userId: item.userId,
+            }
+            // console.log(deleteData);
+            const postStore = usePostStore();
+            postStore.dropPost(deleteData);
+        },
+        commentPost(item) {
+            const postStore = usePostStore();
+            postStore.expendPost(item);
+            console.log(item);
+        },
     },
     mounted() {
         const postStore = usePostStore();
@@ -89,7 +92,7 @@ export default {
         </div>
         <div class="commentIcon">
             <div class="iconLeft">
-                <i class="fa-regular fa-comment"></i>
+                <i class="fa-regular fa-comment" @click="commentPost(item)" :class="{ 'disable': item.editMode }"></i>
             </div>
             <div class="iconRight">
                 <i v-if="item.userId == currentUserId && !item.editMode" @click="editPost(item)"
@@ -202,6 +205,12 @@ export default {
                     width: 60px;
                     opacity: 1;
                 }
+            }
+
+            .disable {
+                pointer-events: none;
+                color: gray;
+                opacity: 0.7;
             }
         }
 
